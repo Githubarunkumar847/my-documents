@@ -3,110 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arun | Document Hub</title>
+<title>Arun | Document Portal</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: #0f172a;
     color: white;
+    padding: 20px;
 }
 
-/* Header */
-header {
-    text-align: center;
-    padding: 50px 20px;
+.sidebar h2 {
+    margin-bottom: 30px;
 }
 
-header h1 {
-    font-size: 2.5rem;
+.doc-link {
+    display: block;
+    padding: 12px;
     margin-bottom: 10px;
-}
-
-header p {
-    color: #cbd5f5;
-}
-
-/* Container */
-.container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    padding: 40px;
-}
-
-/* Card */
-.card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    transition: 0.3s;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.card:hover {
-    transform: translateY(-10px) scale(1.02);
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 15px;
+    background: #1e293b;
     border-radius: 8px;
-    text-decoration: none;
+    cursor: pointer;
+}
+
+.doc-link:hover {
+    background: #334155;
+}
+
+/* Main */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+    background: #f1f5f9;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 8px 12px;
+    margin-left: 10px;
+    border: none;
+    background: #2563eb;
     color: white;
-    background: #3b82f6;
-    transition: 0.3s;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 .btn:hover {
-    background: #2563eb;
+    background: #1d4ed8;
 }
 
-/* Footer */
-footer {
+/* Viewer */
+.viewer {
+    flex: 1;
+    overflow: auto;
+    background: #e2e8f0;
     text-align: center;
-    padding: 20px;
-    color: #94a3b8;
+}
+
+canvas {
+    margin: 10px auto;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    align-items: center;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>📄 Arun's Document Hub</h1>
-    <p>Professional Portfolio & Downloads</p>
-</header>
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>📁 Documents</h2>
+    <div class="doc-link" onclick="loadPDF('NOC26CH17S1250700119.pdf')">Hall Ticket 1</div>
+    <div class="doc-link" onclick="loadPDF('NOC26CH16S1050700280.pdf')">Hall Ticket 2</div>
+</div>
 
-<div class="container">
+<!-- Main -->
+<div class="main">
 
-    <!-- Document 1 -->
-    <div class="card">
-        <h2>Hall Ticket 1</h2>
-        <p>Aspen Plus Certification Exam Hall Ticket 1</p>
-        <a href="NOC26CH17S1250700119.pdf" target="_blank" class="btn">View</a>
-        <a href="NOC26CH17S1250700119.pdf" download class="btn">Download</a>
+    <!-- Topbar -->
+    <div class="topbar">
+        <div>Corporate Document Portal</div>
+
+        <div class="controls">
+            <button class="btn" onclick="zoomIn()">Zoom +</button>
+            <button class="btn" onclick="zoomOut()">Zoom -</button>
+            <button class="btn" onclick="printPDF()">Print</button>
+            <button class="btn" onclick="downloadPDF()">Download</button>
+        </div>
     </div>
 
-    <!-- Document 2 -->
-    <div class="card">
-        <h2>Hall Ticket 2</h2>
-        <p>Aspen Plus Certification Exam Hall Ticket 2</p>
-        <a href="NOC26CH16S1050700280.pdf" target="_blank" class="btn">View</a>
-        <a href="NOC26CH16S1050700280.pdf" download class="btn">Download</a>
-    </div>
+    <!-- Viewer -->
+    <div class="viewer" id="viewer"></div>
 
 </div>
 
-<footer>
-    © 2026 Arun | Built with GitHub Pages
-</footer>
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+let pdfDoc = null;
+let scale = 1.2;
+let currentFile = "NOC26CH17S1250700119.pdf";
+
+function loadPDF(file) {
+    currentFile = file;
+    pdfjsLib.getDocument(file).promise.then(pdf => {
+        pdfDoc = pdf;
+        renderAllPages();
+    });
+}
+
+function renderAllPages() {
+    const viewer = document.getElementById('viewer');
+    viewer.innerHTML = "";
+
+    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+        pdfDoc.getPage(pageNum).then(page => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const viewport = page.getViewport({ scale: scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            page.render({ canvasContext: ctx, viewport: viewport });
+            viewer.appendChild(canvas);
+        });
+    }
+}
+
+function zoomIn() {
+    scale += 0.2;
+    renderAllPages();
+}
+
+function zoomOut() {
+    if (scale > 0.6) {
+        scale -= 0.2;
+        renderAllPages();
+    }
+}
+
+function printPDF() {
+    window.open(currentFile).print();
+}
+
+function downloadPDF() {
+    let link = document.createElement('a');
+    link.href = currentFile;
+    link.download = currentFile;
+    link.click();
+}
+
+/* Load default */
+loadPDF(currentFile);
+</script>
 
 </body>
 </html>
