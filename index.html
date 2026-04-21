@@ -1,15 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Documents</title>
-</head>
-<body>
-    <h1>My Documents</h1>
-    
-    <p><a href="NOC26CH17S1250700119.pdf" target="_blank">View Document 1</a></p>
-    <p><a href="NOC26CH17S1250700119.pdf" download>Download Document 1</a></p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arun | Document Hub</title>
 
-    <p><a href="NOC26CH16S1050700280.pdf" target="_blank">View Document 2</a></p>
-    <p><a href="NOC26CH16S1050700280.pdf" download>Download Document 2</a></p>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #cbd5f5;
+}
+
+/* Container */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 40px;
+}
+
+/* Card */
+.card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    background: #3b82f6;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #2563eb;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📄 Arun's Document Hub</h1>
+    <p>Professional Portfolio & Downloads</p>
+</header>
+
+<div class="container">
+
+    <!-- Document 1 -->
+    <div class="card">
+        <h2>Hall Ticket 1</h2>
+        <p>Aspen Plus Certification Exam Hall Ticket 1</p>
+        <a href="NOC26CH17S1250700119.pdf" target="_blank" class="btn">View</a>
+        <a href="NOC26CH17S1250700119.pdf" download class="btn">Download</a>
+    </div>
+
+    <!-- Document 2 -->
+    <div class="card">
+        <h2>Hall Ticket 2</h2>
+        <p>Aspen Plus Certification Exam Hall Ticket 2</p>
+        <a href="NOC26CH16S1050700280.pdf" target="_blank" class="btn">View</a>
+        <a href="NOC26CH16S1050700280.pdf" download class="btn">Download</a>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Arun | Built with GitHub Pages
+</footer>
+
 </body>
 </html>
